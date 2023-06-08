@@ -1,0 +1,154 @@
+05/06/2023 - Day:1
+
+1. Pascals triangle
+{
+    public:
+        vector<vector < int>> generate(int n)
+        {
+            vector<vector < int>> ans;
+            for (int i = 0; i < n; i++)
+            {
+                vector<int> temp;
+                for (int j = 0; j <= i; j++)
+                {
+                    temp.push_back(1);
+                }
+                ans.push_back(temp);
+            }
+
+            for (int i = 2; i < n; i++)
+            {
+                for (int j = 1; j < i; j++)
+                {
+                    ans[i][j] = ans[i - 1][j - 1] + ans[i - 1][j];
+                }
+            }
+            return ans;
+        }
+};
+
+2. Next Permutation
+class Solution
+{
+    public:
+        void nextPermutation(vector<int> &nums)
+        {
+            int beforeTop = -1, n = nums.size();
+            for (int i = n - 1; i > 0; i--)
+            {
+                if (nums[i - 1] < nums[i])
+                {
+                    beforeTop = i-1;
+                    break;
+                }
+            }
+            cout<<beforeTop<<endl;
+            if (beforeTop == -1)
+            {
+                reverse(nums.begin(), nums.end());
+                return;
+            }
+
+            for (int i = n - 1; i > beforeTop; i--)
+            {
+                if (nums[i] > nums[beforeTop])
+                {
+                    swap(nums[beforeTop], nums[i]);
+                    break;
+                }
+            }
+
+            reverse(nums.begin() + beforeTop+1, nums.end());
+        }
+};
+
+3. Kaden's Algorithm (maximun sum subarray
+class Solution
+{
+    public:
+        int maxSubArray(vector<int> &nums)
+        {
+            bool isAllNegative = true;
+            int maxElement = INT_MIN;
+            for (auto &val: nums)
+            {
+                if (val >= 0)
+                {
+                    isAllNegative = false;
+                }
+                maxElement = max(maxElement, val);
+            }
+            if (isAllNegative)
+            {
+                return maxElement;
+            }
+
+            int currentMax = 0, ansMax = 0;
+
+            for (auto &val: nums)
+            {
+                currentMax += val;
+                ansMax = max(ansMax, currentMax);
+                if (currentMax < 0)
+                {
+                    currentMax = 0;
+                }
+            }
+
+            return ansMax;
+        }
+};
+
+4. Sort colors (sort an array of 0,1,2)
+class Solution {
+public:
+    void sortColors(vector<int>& nums) {
+        int zero=0, one=0, two=0;
+        for(auto &val:nums)
+        {
+            if(val==zero) zero++;
+            if(val==one) one++;
+            if(val==two) two++;
+        }
+        int i=0;
+        while(zero--)
+        {
+            nums[i++]=0;
+        }
+        while(one--)
+        {
+            nums[i++]=1;
+        }
+        while(two--)
+        {
+            nums[i++]=2;
+        }
+    }
+};
+
+class Solution
+{
+    public:
+        void sortColors(vector<int> &nums)
+        {
+            int low = 0, mid = 0, high = nums.size() - 1;
+            while (mid <= high)
+            {
+                if (nums[mid] == 0)
+                {
+                    swap(nums[mid], nums[low]);
+                    low++;
+                    mid++;
+                }
+                else if (nums[mid] == 1)
+                {
+                    mid++;
+                }
+                else
+                {
+                    swap(nums[mid], nums[high]);
+                    high--;
+                }
+            }
+        }
+};
