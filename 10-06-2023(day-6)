@@ -1,169 +1,136 @@
-17. Longest Consecutive Sequence
+21. Remove Nth Node From End of List
 
 class Solution
 {
     public:
-        int longestConsecutive(vector<int> &nums)
+        ListNode* removeNthFromEnd(ListNode *head, int n)
         {
-            if (nums.size() == 0 or nums.size() == 1) return nums.size();
-            unordered_set<int> m;
-            int curr = 0, maxx = 0;
-            for (auto &val: nums)
-            {
-                m.insert(val);
-            }
-            int ans = INT_MIN;
-            for (auto &val: nums)
-            {
-                if (m.find(val - 1) == m.end())
-                {
-                    int currVal = val, temp = 1;
-                    while (m.find(currVal + 1) != m.end())
-                    {
-                        temp++;
-                        currVal += 1;
-                    }
+            ListNode *fast = head, *slow = head;
 
-                    ans = max(temp, ans);
+            for (int i = 0; i < n and fast; i++)
+            {
+                fast = fast->next;
+            }
+
+            if (!fast)
+            {
+                return slow->next;
+            }
+
+            while (fast->next)
+            {
+                fast = fast->next;
+                slow = slow->next;
+            }
+
+            slow->next = slow->next->next;
+            return head;
+        }
+};
+
+22. Add two numbers as linked list
+
+{
+    public:
+        ListNode* addTwoNumbers(ListNode *l1, ListNode *l2)
+        {
+            ListNode *ans = nullptr, *k = nullptr, *p = l1, *q = l2;
+            int carry = 0;
+            while (p and q)
+            {
+                int temp = p->val + q->val + carry;
+                int sum = temp % 10;
+                carry = temp / 10;
+                if (!k)
+                {
+                    k = new ListNode(sum);
+                    ans = k;
                 }
+                else
+                {
+                    ListNode *temp2 = new ListNode(sum);
+                    k->next = temp2;
+                    k = k->next;
+                }
+                p = p->next;
+                q = q->next;
+            }
+            while (p)
+            {
+                int temp = p->val + carry;
+                int sum = temp % 10;
+                carry = temp / 10;
+                if (!k)
+                {
+                    k = new ListNode(sum);
+                    ans = k;
+                }
+                else
+                {
+                    ListNode *temp2 = new ListNode(sum);
+                    k->next = temp2;
+                    k = k->next;
+                }
+                p = p->next;
+            }
+            while (q)
+            {
+                int temp = q->val + carry;
+                int sum = temp % 10;
+                carry = temp / 10;
+                if (!k)
+                {
+                    k = new ListNode(sum);
+                    ans = k;
+                }
+                else
+                {
+                    ListNode *temp2 = new ListNode(sum);
+                    k->next = temp2;
+                    k = k->next;
+                }
+                q = q->next;
+            }
+            if (carry != 0)
+            {
+                ListNode *temp2 = new ListNode(carry);
+                k->next = temp2;
             }
             return ans;
         }
 };
 
-18. Reverse linked list
+23. Delete Node in a Linked List
 
 class Solution
 {
     public:
-    ListNode* reverseList(ListNode *head)
-    {
-       	//             ListNode *p, *q, *r;
-       	//             p = head;
-       	//             q = r = nullptr;
-       	//             while (p)
-       	//             {
-       	//                 r = q;
-       	//                 q = p;
-       	//                 p = p->next;
-       	//                 q->next = r;
-       	//             }
-       	//             head = q;
-       	//             return head;
-
-       	//recursion 
-        if(head==nullptr || head->next==nullptr)
+        void deleteNode(ListNode *node)
         {
-            return head;
-        }
-        ListNode *newHead = reverseList(head->next);
-        
-        head->next->next=head;
-        head->next=nullptr;
-
-        return newHead;
-    }
-};
-
-19. Find middle of linked list
-class Solution
-{
-    public:
-        ListNode* middleNode(ListNode *head)
-        {
-            ListNode *slow = head, *fast = head;
-            while (fast)
-            {
-                fast = fast->next;
-                if (fast)
-                {
-                    slow = slow->next;
-                    fast = fast->next;
-                }
-            }
-            return slow;
+            node->val = node->next->val;
+            node->next = node->next->next;
         }
 };
 
-20. Merge two sorted linked list
+24. Intersection of Two Linked Lists
+
 class Solution
 {
     public:
-        ListNode* mergeTwoLists(ListNode *a, ListNode *b)
+        ListNode* getIntersectionNode(ListNode *a, ListNode *b)
         {
-            if (!a)
+            if (!a or!b)
             {
-                return b;
-            }
-            if (!b)
-            {
-                return a;
-            }
-            ListNode *last = nullptr, *ans = nullptr;
-
-            if (a and b and a->val < b->val)
-            {
-                last = a;
-                ans = last;
-                a = a->next;
-                last->next = nullptr;
-            }
-            else if (a and b and a->val > b->val)
-            {
-                last = b;
-                ans = last;
-                b = b->next;
-                last->next = nullptr;
-            }
-            else if (a and b)
-            {
-                last = a;
-                ans = last;
-                a = a->next;
-                last->next = b;
-                last = last->next;
-                b = b->next;
-                last->next = nullptr;
+                return nullptr;
             }
 
             ListNode *p = a, *q = b;
 
-            while (p and q)
+            while (p != q)
             {
-                if (p->val < q->val)
-                {
-                    last->next = p;
-                    p = p->next;
-                    last = last->next;
-                    last->next = nullptr;
-                }
-                else if (p->val > q->val)
-                {
-                    last->next = q;
-                    q = q->next;
-                    last = last->next;
-                    last->next = nullptr;
-                }
-                else
-                {
-                    last->next = p;
-                    p = p->next;
-                    last=last->next;
-                    last->next=q;
-                    q = q->next;
-                    last=last->next;
-                    last->next = nullptr;
-                }
+                p = p == nullptr ? b : p->next;
+                q = q == nullptr ? a : q->next;
             }
-
-            if (p)
-            {
-                last->next = p;
-            }
-            if (q)
-            {
-                last->next = q;
-            }
-            return ans;
+            return p;
         }
 };
