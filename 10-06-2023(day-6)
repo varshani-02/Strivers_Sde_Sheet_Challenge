@@ -1,0 +1,169 @@
+17. Longest Consecutive Sequence
+
+class Solution
+{
+    public:
+        int longestConsecutive(vector<int> &nums)
+        {
+            if (nums.size() == 0 or nums.size() == 1) return nums.size();
+            unordered_set<int> m;
+            int curr = 0, maxx = 0;
+            for (auto &val: nums)
+            {
+                m.insert(val);
+            }
+            int ans = INT_MIN;
+            for (auto &val: nums)
+            {
+                if (m.find(val - 1) == m.end())
+                {
+                    int currVal = val, temp = 1;
+                    while (m.find(currVal + 1) != m.end())
+                    {
+                        temp++;
+                        currVal += 1;
+                    }
+
+                    ans = max(temp, ans);
+                }
+            }
+            return ans;
+        }
+};
+
+18. Reverse linked list
+
+class Solution
+{
+    public:
+    ListNode* reverseList(ListNode *head)
+    {
+       	//             ListNode *p, *q, *r;
+       	//             p = head;
+       	//             q = r = nullptr;
+       	//             while (p)
+       	//             {
+       	//                 r = q;
+       	//                 q = p;
+       	//                 p = p->next;
+       	//                 q->next = r;
+       	//             }
+       	//             head = q;
+       	//             return head;
+
+       	//recursion 
+        if(head==nullptr || head->next==nullptr)
+        {
+            return head;
+        }
+        ListNode *newHead = reverseList(head->next);
+        
+        head->next->next=head;
+        head->next=nullptr;
+
+        return newHead;
+    }
+};
+
+19. Find middle of linked list
+class Solution
+{
+    public:
+        ListNode* middleNode(ListNode *head)
+        {
+            ListNode *slow = head, *fast = head;
+            while (fast)
+            {
+                fast = fast->next;
+                if (fast)
+                {
+                    slow = slow->next;
+                    fast = fast->next;
+                }
+            }
+            return slow;
+        }
+};
+
+20. Merge two sorted linked list
+class Solution
+{
+    public:
+        ListNode* mergeTwoLists(ListNode *a, ListNode *b)
+        {
+            if (!a)
+            {
+                return b;
+            }
+            if (!b)
+            {
+                return a;
+            }
+            ListNode *last = nullptr, *ans = nullptr;
+
+            if (a and b and a->val < b->val)
+            {
+                last = a;
+                ans = last;
+                a = a->next;
+                last->next = nullptr;
+            }
+            else if (a and b and a->val > b->val)
+            {
+                last = b;
+                ans = last;
+                b = b->next;
+                last->next = nullptr;
+            }
+            else if (a and b)
+            {
+                last = a;
+                ans = last;
+                a = a->next;
+                last->next = b;
+                last = last->next;
+                b = b->next;
+                last->next = nullptr;
+            }
+
+            ListNode *p = a, *q = b;
+
+            while (p and q)
+            {
+                if (p->val < q->val)
+                {
+                    last->next = p;
+                    p = p->next;
+                    last = last->next;
+                    last->next = nullptr;
+                }
+                else if (p->val > q->val)
+                {
+                    last->next = q;
+                    q = q->next;
+                    last = last->next;
+                    last->next = nullptr;
+                }
+                else
+                {
+                    last->next = p;
+                    p = p->next;
+                    last=last->next;
+                    last->next=q;
+                    q = q->next;
+                    last=last->next;
+                    last->next = nullptr;
+                }
+            }
+
+            if (p)
+            {
+                last->next = p;
+            }
+            if (q)
+            {
+                last->next = q;
+            }
+            return ans;
+        }
+};
