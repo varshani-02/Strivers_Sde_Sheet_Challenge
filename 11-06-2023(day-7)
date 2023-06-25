@@ -1,0 +1,193 @@
+25. Linked List Cycle
+
+class Solution
+{
+    public:
+        bool hasCycle(ListNode *head)
+        {
+            ListNode *p = head, *q = head;
+            if (!p)
+            {
+                return false;
+            }
+            do {
+                p = p->next;
+                q = q->next;
+                if (q)
+                {
+                    q = q->next;
+                    if (p == q)
+                    {
+                        return true;
+                    }
+                }
+            } while (p != q and p and q);
+
+            return false;
+        }
+};
+
+26. Reverse nodes in k-group
+
+class Solution
+{
+    public:
+        int length(ListNode *head)
+        {
+            int ans = 0;
+            while (head)
+            {
+                ans++;
+                head = head->next;
+            }
+            return ans;
+        }
+    ListNode* reverseg(int len, ListNode *head, int k)
+    {
+        if (len < k)
+        {
+            return head;
+        }
+
+        ListNode *p = head, *q = nullptr, *r = nullptr;
+        int count = 0;
+
+        while (count < k and p)
+        {
+            r = q;
+            q = p;
+            p = p->next;
+            q->next=r;
+            count++;
+        }
+        if (p)
+        {
+            head->next = reverseg(len - k, p, k);
+        }
+        return q;
+    }
+    ListNode* reverseKGroup(ListNode *head, int k)
+    {
+        int len = length(head);
+        return reverseg(len, head, k);
+    }
+};
+
+27. Palindrome Linked List
+
+class Solution
+{
+    public:
+        ListNode* rev(ListNode *head)
+        {
+            ListNode *p = head, *q = nullptr, *r = nullptr;
+            while (p)
+            {
+                r = q;
+                q = p;
+                p = p->next;
+                q->next = r;
+            }
+            head = q;
+            return head;
+        }
+    ListNode* findMid(ListNode *head)
+    {
+        ListNode *slow = head, *fast = head;
+        while (fast->next)
+        {
+            fast = fast->next;
+            if (fast->next)
+            {
+                slow = slow->next;
+                fast = fast->next;
+            }
+        }
+        return slow;
+    }
+    bool isPalindrome(ListNode *head)
+    {
+        ListNode *mid = findMid(head);
+        ListNode *first = head, *second = mid->next;
+        mid->next = nullptr;
+        second = rev(second);
+
+        while (first and second)
+        {
+            if (first->val != second->val)
+            {
+                return false;
+            }
+            first = first->next;
+            second = second->next;
+        }
+        return true;
+    }
+};
+
+class Solution
+{
+    public:
+        bool isPalindrome(ListNode *head)
+        {
+            string s = "";
+            ListNode *p = head;
+
+            while (p)
+            {
+                s += to_string(p->val);
+                p = p->next;
+            }
+
+            for (int i = 0; i < s.size(); i++)
+            {
+                if (s[i] != s[s.size() - i - 1])
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+};
+
+28. Linked List Cycle II
+
+class Solution
+{
+    public:
+        ListNode* detectCycle(ListNode *head)
+        {
+            ListNode *slow = head, *fast = head;
+            if (!head)
+            {
+                return nullptr;
+            }
+            do {
+                slow = slow->next;
+                fast = fast->next;
+                if (fast)
+                {
+                    fast = fast->next;
+                    if (fast == slow)
+                    {
+                        break;
+                    }
+                }
+            } while (fast != slow and slow and fast);
+
+            if (!slow or !fast)
+            {
+                return nullptr;
+            }
+
+            slow = head;
+
+            while (slow != fast)
+            {
+                slow = slow->next;
+                fast = fast->next;
+            }
+
+            return slow;
+        }
+};
