@@ -1,0 +1,187 @@
+29. Flattening a Linked List
+
+Node *mergeLists(Node *a, Node *b)
+{
+    Node *dummy=new Node(-1);
+    Node *ans=dummy;
+    
+    while(a and b)
+    {
+        if(a->data < b->data)
+        {
+            dummy->bottom=a;
+            a=a->bottom;
+            dummy=dummy->bottom;
+        }
+        else
+        {
+            dummy->bottom=b;
+            dummy=dummy->bottom;
+            b=b->bottom;
+        }
+    }
+    
+    if(a) dummy->bottom=a;
+    else  dummy->bottom=b;
+    
+    return ans->bottom;
+}
+Node *flatten(Node *root)
+{
+   if(!root or !root->next) return root;
+   
+   root->next=flatten(root->next);
+   
+   root= mergeLists(root, root->next);
+   
+   return root;
+   
+}
+
+30. Rotate list
+
+class Solution {
+public:
+    int length(ListNode *head)
+    {
+        int i=0;
+        while(head)
+        {
+            i++;
+            head=head->next;
+        }
+        return i;
+    }
+    ListNode *rev(ListNode *head)
+    {
+        ListNode *p=head, *q=nullptr, *r=nullptr;
+        while(p)
+        {
+            r=q;
+            q=p;
+            p=p->next;
+            q->next=r;
+        }
+        head=q;
+        return q;
+    }
+    ListNode* rotateRight(ListNode* head, int k) {
+        int n = length(head);
+        if(!head or !head->next or k%n==0)
+            return head;
+       
+        head=rev(head);
+        
+        ListNode *prev=nullptr, *p=head;
+        int i=k%n;
+        while(p and i--)
+        {
+            prev=p;
+            p=p->next;
+        }
+        prev->next=nullptr;
+        head=rev(head);
+        p=rev(p);
+        
+        ListNode *q=head;
+        while(q->next)
+        {
+            q=q->next;
+        }
+        
+        q->next=p;
+        
+            
+        return head;
+    }
+};
+
+31. Copy List with Random Pointer
+class Solution
+{
+    public:
+        Node* copyRandomList(Node *head)
+        {
+            if (!head) return head;
+
+            Node *p = head;
+
+            while (p)
+            {
+                Node *temp = p->next;
+                p->next = new Node(p->val);
+                p->next->next = temp;
+                p = temp;
+            }
+
+            p = head;
+            while (p)
+            {
+                if (p->random)
+                {
+                    p->next->random = p->random->next;
+                }
+                p = p->next->next;
+            }
+
+            p = head;
+            Node *newHead = p->next;
+
+            while (p)
+            {
+                Node *temp = p->next;
+                if (p->next)
+                    p->next = p->next->next;
+                if (temp->next)
+                    temp->next = temp->next->next;
+                p = p->next;
+            }
+            return newHead;
+        }
+};
+
+32. 3Sum
+class Solution
+{
+    public:
+        vector<vector < int>> threeSum(vector<int> &nums)
+        {
+            sort(nums.begin(), nums.end());
+
+            vector<vector < int>> ans;
+
+            for (int i = 0; i < nums.size(); i++)
+            {
+                if (i == 0 or (i > 0 and nums[i - 1] != nums[i]))
+                {
+                    int req = -nums[i], l = i + 1, h = nums.size() - 1;
+
+                    while (l < h)
+                    {
+                        if (nums[l] + nums[h] == req)
+                        {
+                            vector<int> temp;
+                            temp.push_back(nums[i]);
+                            temp.push_back(nums[l]);
+                            temp.push_back(nums[h]);
+                            ans.push_back(temp);
+                            while (l < h and nums[l] == nums[l + 1]) l++;
+                            while (l < h and nums[h] == nums[h - 1]) h--;
+
+                            l++;
+                            h--;
+                        }
+                        else if (nums[l] + nums[h] < req)
+                        {
+                            l++;
+                        }
+                        else
+                        {
+                            h--;
+                        }
+                    }
+                }
+            }
+            return ans;
+        }
+};
