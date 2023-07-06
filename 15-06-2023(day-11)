@@ -1,0 +1,127 @@
+40. Subsets ii
+
+class Solution {
+public:
+    void solve(vector<int> &nums,vector<vector<int>> &ans, vector<int> &current, int i)
+    {
+        if(i==nums.size())
+        {
+            ans.push_back(current);
+            return;
+        }
+         
+        //include
+        current.push_back(nums[i]);
+        solve(nums, ans, current, i+1);
+        //uncomment the line below if you want to send current as reference (backtracking)
+        current.pop_back();
+        
+        
+        //exclude
+        while(i+1<nums.size() and nums[i]==nums[i+1]) i++;
+        solve(nums, ans, current, i+1);
+    }
+    vector<vector<int>> subsetsWithDup(vector<int>& nums) {
+        vector<vector<int>> ans;
+        vector<int> current;
+        sort(nums.begin(), nums.end());
+        solve(nums, ans, current, 0);
+        return ans;
+    }
+};
+
+41. Combination Sum
+
+class Solution
+{
+    public:
+        void solve(vector<int> &nums, int i, int currsum, vector<int> &current, vector< vector< int>> &ans, int target)
+        {
+            if (i == nums.size())
+            {
+                if (currsum == target)
+                {
+                    ans.push_back(current);
+                }
+                return;
+            }
+
+            if (currsum < target)
+            {
+                current.push_back(nums[i]);
+                solve(nums, i, currsum + nums[i], current, ans, target);
+                current.pop_back();
+            }
+
+            solve(nums, i + 1, currsum, current, ans, target);
+        }
+    vector<vector < int>> combinationSum(vector<int> &candidates, int target)
+    {
+        vector<vector < int>> ans;
+        vector<int> current;
+        solve(candidates, 0, 0, current, ans, target);
+        return ans;
+    }
+};
+
+42. Combination Sum II
+
+class Solution
+{
+    public:
+        void solve(vector<int> &nums, int idx, vector<int> &current, vector< vector< int>> &ans, int target)
+        {
+            if (target == 0)
+            {
+                ans.push_back(current);
+                return;
+            }
+
+            for (int i = idx; i < nums.size(); i++)
+            {
+                if (i > idx and nums[i] == nums[i - 1]) continue;
+                if (target < nums[i]) break;
+
+                current.push_back(nums[i]);
+                solve(nums, i + 1, current, ans, target - nums[i]);
+                current.pop_back();
+            }
+        }
+    vector<vector < int>> combinationSum2(vector<int> &nums, int target)
+    {
+        sort(nums.begin(), nums.end());
+        vector<vector < int>> ans;
+        vector<int> current;
+        solve(nums, 0, current, ans, target);
+        return ans;
+    }
+};
+
+43. Permutations
+
+class Solution
+{
+    private:
+        void solve(vector<int> &nums, int index, vector< vector< int >> &ans)
+        {
+            if (index == nums.size())
+            {
+                ans.push_back(nums);
+                return;
+            }
+
+            for (int i = index; i < nums.size(); i++)
+            {
+                swap(nums[i], nums[index]);
+                solve(nums, index+1, ans);
+                swap(nums[i], nums[index]);
+            }
+        }
+    public:
+        vector<vector < int>> permute(vector<int> &nums)
+        {
+            vector<vector < int>> ans;
+            solve(nums, 0, ans);
+            return ans;
+        }
+};
