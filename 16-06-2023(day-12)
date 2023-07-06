@@ -1,0 +1,239 @@
+44. N Queens problem
+class Solution
+{
+    public:
+        void addSolution(vector<vector < int>> &board, vector< vector< string>> &ans, int n)
+        {
+            vector<string> temp;
+            for (int i = 0; i < n; i++)
+            {
+                string temp1;
+                for (int j = 0; j < n; j++)
+                {
+                    if (board[i][j] == 1)
+                    {
+                        temp1.push_back('Q');
+                    }
+                    else
+                    {
+                        temp1.push_back('.');
+                    }
+                }
+                temp.push_back(temp1);
+            }
+            ans.push_back(temp);
+        }
+    bool check(int row, int col, vector<vector < int>> &board, int n)
+    {
+        int x = row, y = col;
+        while (y >= 0)
+        {
+            if (board[x][y--] == 1) return false;
+        }
+        x = row;
+        y = col;
+        while (x >= 0 and y >= 0)
+        {
+            if (board[x--][y--] == 1) return false;
+        }
+        x = row;
+        y = col;
+        while (x < n and y >= 0)
+        {
+            if (board[x++][y--] == 1) return false;
+        }
+        return true;
+    }
+    void solve(vector<vector < int>> &board, int n, vector< vector< string>> &ans, int col)
+    {
+        if (col == n)
+        {
+            addSolution(board, ans, n);
+            return;
+        }
+
+        for (int row = 0; row < n; row++)
+        {
+            if (check(row, col, board, n))
+            {
+                board[row][col] = 1;
+                solve(board, n, ans, col + 1);
+                board[row][col] = 0;
+            }
+        }
+    }
+    vector<vector < string>> solveNQueens(int n)
+    {
+        vector<vector < int>> board(n, vector<int> (n, 0));
+        vector<vector < string>> ans;
+        solve(board, n, ans, 0);
+        return ans;
+    }
+};
+
+45. Rat in a maze problem
+
+class Solution{
+    public:
+    bool check(vector<vector<int>> &m, int n, int newX, int newY, set<pair<int, int>> &vis)
+    {
+        return newX>=0 and newX<n and newY>=0 and newY<n and vis.find({newX, newY})==vis.end() and m[newX][newY]==1;
+    }
+    void solve(vector<vector<int>> &m, int n, int x, int y, vector<string> &ans, set<pair<int, int>> &vis, string &current)
+    {
+        if(x==n-1 and y==n-1)
+        {
+            ans.push_back(current);
+            return;
+        }
+        
+        //DLRU
+        
+        vis.insert({x, y});
+        int newX, newY;
+        
+        //down
+        newX=x+1;
+        newY=y;
+        if(check(m, n, newX, newY, vis))
+        {
+            current.push_back('D');
+            solve(m, n, newX, newY, ans, vis, current);
+            current.pop_back();
+        }
+        
+        //left
+        newX=x;
+        newY=y-1;
+        if(check(m, n, newX, newY, vis))
+        {
+            current.push_back('L');
+            solve(m, n, newX, newY, ans, vis, current);
+            current.pop_back();
+        }
+        
+        //right
+        newX=x;
+        newY=y+1;
+        if(check(m, n, newX, newY, vis))
+        {
+            current.push_back('R');
+            solve(m, n, newX, newY, ans, vis, current);
+            current.pop_back();
+        }
+        
+        newX=x-1;
+        newY=y;
+        if(check(m, n, newX, newY, vis))
+        {
+            current.push_back('U');
+            solve(m, n, newX, newY, ans, vis, current);
+            current.pop_back();
+        }
+        
+        
+        vis.erase({x, y});
+    }
+    vector<string> findPath(vector<vector<int>> &m, int n) {
+        // Your code goes here
+        vector<string> ans;
+        if(m[0][0]==0) return ans;
+        set<pair<int, int>> vis;
+        string current="";
+        solve(m, n, 0, 0, ans, vis, current);
+        //sort(ans.begin(), ans.end());
+        return ans;
+    }
+};
+
+46. Search in rotated sorted array
+class Solution
+{
+    public:
+        int search(vector<int> &nums, int x)
+        {
+            int l = 0, h = nums.size() - 1;
+            while (l <= h)
+            {
+                int m = (l + h) / 2;
+                if (nums[m] == x)
+                {
+                    return m;
+                }
+                else if (nums[l] <= nums[m])
+                {
+                    if (x >= nums[l] and x <= nums[m])
+                    {
+                        h = m - 1;
+                    }
+                    else
+                    {
+                        l = m + 1;
+                    }
+                }
+                else
+                {
+                    if (x >= nums[m] and x <= nums[h])
+                    {
+                        l = m + 1;
+                    }
+                    else
+                    {
+                        h = m - 1;
+                    }
+                }
+            }
+
+            return -1;
+        }
+};
+
+47. Median of two sorted arrays
+
+class Solution {
+public:
+    double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {
+        if(nums1.size()>nums2.size())
+        {
+            return findMedianSortedArrays(nums2, nums1);
+        }
+        
+        int n1=nums1.size(), n2=nums2.size();
+        
+        int low=0, high=n1;
+        
+        while(low<=high)
+        {
+            int part1 = (low + high)/2;
+            int part2= (n1+n2+1)/2-part1;
+            
+            int left1=part1==0?INT_MIN:nums1[part1-1];
+            int left2=part2==0?INT_MIN:nums2[part2-1];
+            
+            int right1=part1==n1?INT_MAX:nums1[part1];
+            int right2=part2==n2?INT_MAX:nums2[part2];
+            
+            if(left1<=right2 and left2<=right1)
+            {
+                if((n1+n2)%2==0)
+                {
+                    return (max(left1, left2)+min(right1, right2))/2.0;
+                }
+                else
+                {
+                    return max(left1, left2);
+                }
+            }
+            else if(left1>right2)
+            {
+                high=part1-1;
+            }
+            else
+            {
+                low=part1+1;
+            }
+        }
+        
+        return 2.0;
+    }
+};
