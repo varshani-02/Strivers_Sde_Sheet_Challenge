@@ -1,0 +1,251 @@
+56. Largest Rectangle in Histogram
+
+class Solution
+{
+    public:
+        int largestRectangleArea(vector<int> &heights)
+        {
+            int n = heights.size();
+            vector<int> left(n);
+            stack<pair<int, int>> sleft;
+
+            stack<pair<int, int>> sright;
+            vector<int> right(n);
+            for (int i = 0; i < n; i++)
+            {
+               	//finding left
+                if (sleft.size() == 0)
+                {
+                    left[i] = -1;
+                }
+                else if (sleft.size() > 0 and sleft.top().first < heights[i])
+                {
+                    left[i] = sleft.top().second;
+                }
+                else if (sleft.size() > 0 and sleft.top().first >= heights[i])
+                {
+                    while (sleft.size() > 0 and sleft.top().first >= heights[i])
+                    {
+                        sleft.pop();
+                    }
+
+                    if (sleft.size() == 0)
+                    {
+                        left[i] = -1;
+                    }
+                    else
+                    {
+                        left[i] = sleft.top().second;
+                    }
+                }
+                sleft.push({ heights[i],
+                    i });
+
+               	//finding right
+                if (sright.size() == 0)
+                {
+                    right[n - i - 1] = n;
+                }
+                else if (sright.size() > 0 and sright.top().first < heights[n - i - 1])
+                {
+                    right[n - i - 1] = sright.top().second;
+                }
+                else if (sright.size() > 0 and sright.top().first >= heights[n - i - 1])
+                {
+                    while (sright.size() > 0 and sright.top().first >= heights[n - i - 1])
+                    {
+                        sright.pop();
+                    }
+
+                    if (sright.size() == 0)
+                    {
+                        right[n - i - 1] = n;
+                    }
+                    else
+                    {
+                        right[n - i - 1] = sright.top().second;
+                    }
+                }
+                sright.push({ heights[n - i - 1],
+                    n - i - 1 });
+            }
+
+            int ans = INT_MIN;
+            for (int i = 0; i < n; i++)
+            {
+                int width = right[i] - left[i] - 1;
+                int currArea = heights[i] *width;
+                ans = max(ans, currArea);
+            }
+            return ans;
+        }
+};
+
+57. Min Stack
+
+class MinStack {
+public:
+    stack<long long> s;
+    long long minEle;
+    MinStack() {
+        
+    }
+    
+    void push(long long val) {
+        if(s.size()==0)
+        {
+            s.push(val);
+            minEle=val;
+        }
+        else
+        {
+            if(val>=minEle)
+            {
+                s.push(val);
+            }
+            else
+            {
+                s.push(2*val-minEle);
+                minEle=val;
+            }
+        }
+        
+        
+    }
+    
+    void pop() {
+        if(s.size()==0)
+            return;
+        if(s.top()>=minEle)
+        {
+            s.pop();
+        }
+        else if(s.top()<minEle)
+        {
+            minEle=2*minEle-s.top();
+            s.pop();
+        }
+    }
+    
+    int top() {
+        if(s.size()==0)
+            return -1;
+        if(s.top()>=minEle)
+        {
+            return s.top();
+        }
+        //else
+        return minEle;
+    }
+    
+    long long getMin() {
+        if(s.size()==0)
+            return -1;
+        return minEle;
+    }
+};
+
+58. Kth Largest Element
+class Solution {
+public:
+    int findKthLargest(vector<int>& nums, int k) {
+       priority_queue<int, vector<int>, greater<int>> pq;
+        
+        for(auto &val:nums)
+        {
+            pq.push(val);
+            if(pq.size()>k)
+            {
+                pq.pop();
+            }
+        }
+        return pq.top();
+    }
+};
+
+59. Stock span problem
+vector<int> findStockSpans(vector<int>& prices) 
+{
+    vector<int> ans;
+    stack<pair<int, int>> stk;
+
+    for(int i=0; i<prices.size(); i++)
+    {
+        if(stk.size()==0)
+        {
+            ans.push_back(-1);
+        }
+        else if(stk.size()>0 and stk.top().first>prices[i])
+        {
+            ans.push_back(stk.top().second);
+        }
+        else if(stk.size()>0 and stk.top().first<=prices[i])
+        {
+            while(stk.size()>0 and stk.top().first<prices[i])
+            {
+                stk.pop();
+            }
+
+            if(stk.size()==0)
+            {
+                ans.push_back(-1);
+            }
+            else
+            {
+                ans.push_back(stk.top().second);
+            }
+        }
+        stk.push({prices[i], i});
+    }
+    for(int i=0; i<ans.size(); i++)
+    {
+        ans[i]=i-ans[i];
+    }
+    return ans;
+}
+
+60. The Celebrity Problem
+class Solution 
+{
+    public:
+    //Function to find if there is a celebrity in the party or not.
+    int celebrity(vector<vector<int> >& m, int n) 
+    {
+        stack<int> s;
+        for(int i=0; i<n; i++)
+        {
+            s.push(i);
+        }
+        
+        while(s.size()>=2)
+        {
+            int i=s.top();
+            s.pop();
+            int j=s.top();
+            s.pop();
+            
+            //if i knows j then j may be the celebrity
+            if(m[i][j]==1)
+            {
+                s.push(j);
+            }
+            else
+            {
+                s.push(i);
+            }
+        }
+        
+        int possible=s.top();
+        for(int i=0; i<n; i++)
+        {
+            if(i!=possible)
+            {
+                if(m[possible][i]==1 or m[i][possible]==0)
+                {
+                    return -1;
+                }
+            }
+        }
+        return possible;
+    }
+};
