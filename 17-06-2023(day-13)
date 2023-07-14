@@ -1,0 +1,171 @@
+48. Palindrome Partitioning
+class Solution
+{
+    public:
+        bool isPalindrome(string &s, int low, int high)
+        {
+            while (low < high)
+            {
+                if (s[low] != s[high])
+                    return false;
+                low++;
+                high--;
+            }
+            return true;
+        }
+    void solve(string &s, vector<string> &current, vector<vector< string>> &ans, int idx)
+    {
+        if (idx == s.size())
+        {
+            ans.push_back(current);
+            return;
+        }
+
+        for (int i = idx; i < s.size(); i++)
+        {
+            if (isPalindrome(s, idx, i))
+            {
+                current.push_back(s.substr(idx, i - idx + 1));
+                solve(s, current, ans, i + 1);
+                current.pop_back();
+            }
+        }
+    }
+    vector<vector < string>> partition(string s)
+    {
+        vector<vector < string>> ans;
+        vector<string> current;
+        solve(s, current, ans, 0);
+        return ans;
+    }
+};
+49. Sudoku Solver
+class Solution
+{
+    public:
+        int n = 9;
+    bool isSafe(vector<vector < char>> &board, int row, int col, char val)
+    {
+        for (int i = 0; i < n; i++)
+        {
+            if (board[i][col] == val) return false;
+            if (board[row][i] == val) return false;
+
+            if (board[3 *(row / 3) + i / 3][3 *(col / 3) + i % 3] == val) return false;
+        }
+
+        return true;
+    }
+    bool solve(vector<vector < char>> &board)
+    {
+        for (int i = 0; i < 9; i++)
+        {
+            for (int j = 0; j < 9; j++)
+            {
+                if (board[i][j] == '.')
+                {
+                    for (char val = '1'; val <= '9'; val++)
+                    {
+                        if (isSafe(board, i, j, val))
+                        {
+                            board[i][j] = val;
+
+                            bool forward = solve(board);
+
+                            if (forward)
+                            {
+                                return true;
+                            }
+
+                            board[i][j] = '.';
+                        }
+                    }
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+    void solveSudoku(vector<vector < char>> &board)
+    {
+        solve(board);
+    }
+};
+
+50. M-Coloring Problem
+class Solution{
+public:
+    // Function to determine if graph can be coloured with at most M colours such
+    // that no two adjacent vertices of graph are coloured with same colour.
+    bool isSafe(bool graph[101][101], int currCol, int node, int color[], int n)
+    {
+        for(int k=0; k<n; k++)
+        {
+            if(k!=node and graph[k][node] == 1 and color[k]==currCol)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+    bool solve(bool graph[101][101], int color[], int node, int m, int n)
+    {
+        if(node==n) return true;
+        
+        for(int k=1; k<=m; k++)
+        {
+            if(isSafe(graph, k, node, color, n))
+            {
+                color[node]=k;
+                if(solve(graph, color, node+1, m, n)) return true;
+                color[node]=0;
+            }
+        }
+        return false;
+    }
+    bool graphColoring(bool graph[101][101], int m, int n) {
+        // your code here
+        int color[n]={0}, node=0;
+        return solve(graph, color, node, m, n);
+    }
+};
+
+51. Kth element of two sorted Arrays
+class Solution{
+    public:
+    int kthElement(int arr1[], int arr2[], int m, int n, int k)
+    {
+        if(m>n)
+        {
+            return kthElement(arr2, arr1, n, m, k);
+        }
+        
+        int low=max(0, k-n), high=min(k, m);
+        
+        while(low<=high)
+        {
+            int cut1=(low+high)/2;
+            int cut2=(k-cut1);
+            
+            int l1=cut1==0?INT_MIN:arr1[cut1-1];
+            int l2=cut2==0?INT_MIN:arr2[cut2-1];
+            
+            int r1=cut1==m?INT_MAX:arr1[cut1];
+            int r2=cut2==n?INT_MAX:arr2[cut2];
+            
+            if(l1<=r2 and l2<=r1)
+            {
+                return max(l1, l2);
+            }
+            else if(l1>r2)
+            {
+                high=cut1-1;
+            }
+            else
+            {
+                low=cut1+1;
+            }
+        }
+        return -1;
+    }
+};
