@@ -1,0 +1,172 @@
+52. Allocate Minimum Number of Pages
+class Solution 
+{
+    public:
+
+    bool check(int books[], int n, int students, int mid)
+    {
+        int currStudent=1, sum=0;
+        for(int i=0; i<n; i++)
+        {
+            sum+=books[i];
+            if(sum>mid)
+            {
+                currStudent++;
+                sum=books[i];
+            }
+            if(currStudent>students)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+    int findPages(int books[], int n, int students) 
+    {
+        //code here
+        if(n<students)
+        {
+            return -1;
+        }
+        int low=*max_element(books, books+n), high=accumulate(books, books+n, 0), ans=-1;
+        
+        while(low<=high)
+        {
+            int mid=low+(high-low)/2;
+            if(check(books, n, students, mid))
+            {
+                ans=mid;
+                high=mid-1;
+            }
+            else
+            {
+                low=mid+1;
+            }
+        }
+        return ans;
+    }
+};
+
+53. Implement stack using queue
+class MyStack
+{
+    public:
+    deque<int> ans;
+    MyStack() {}
+
+    void push(int x)
+    {
+        ans.push_back(x);
+    }
+
+    int pop()
+    {
+        int x=ans.back();
+        ans.pop_back();
+        return x;
+    }
+
+    int top()
+    {
+        return ans.back();
+    }
+
+    bool empty()
+    {
+        return ans.empty();
+    }
+};
+
+54. Implement Queue using Stack
+class MyQueue {
+public:
+    stack<int> s;
+    MyQueue() {
+        
+    }
+    
+    void push(int x) {
+        s.push(x);
+    }
+    
+    int pop() {
+        stack<int> help;
+        while(s.size()>1)
+        {
+            help.push(s.top());
+            s.pop();
+        }
+        int x=s.top();
+        s.pop();
+        while(help.size()>0)
+        {
+            s.push(help.top());
+            help.pop();
+        }
+        return x;
+    }
+    
+    int peek() {
+        stack<int> help;
+        while(s.size()>1)
+        {
+            help.push(s.top());
+            s.pop();
+        }
+        int x=s.top();
+        while(help.size()>0)
+        {
+            s.push(help.top());
+            help.pop();
+        }
+        return x;
+    }
+    
+    bool empty() {
+        return s.empty();
+    }
+};
+
+
+ 55. Valid Parentheses
+class Solution
+{
+public:
+    bool isValid(string s)
+    {
+        stack<char> st;
+        char temp;
+        bool ans = true;
+        for (int i = 0; s[i] != '\0'; i++)
+        {
+            if(st.empty() && (s[i]== ')' || s[i] == '}' || s[i] == ']'))
+            {
+                ans = false;
+            }
+            if (s[i] == '(' || s[i] == '{' || s[i] == '[')
+            {
+                st.push(s[i]);
+            }
+            else if(!st.empty())
+            {
+                temp = st.top();
+                st.pop();
+            }
+            if (s[i] == '}' && temp != '{')
+            {
+                ans = false;
+            }
+            else if (s[i] == ')' && temp != '(')
+            {
+                ans = false;
+            }
+            else if (s[i] == ']' && temp != '[')
+            {
+                ans = false;
+            }
+        }
+        if(st.empty())
+            return ans;
+        return false;
+    }
+};
